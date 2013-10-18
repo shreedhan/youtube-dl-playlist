@@ -50,12 +50,15 @@ class PlaylistDownloader:
         print ytId + '(' + str(self.downloaded).zfill(3) + '):', ytTitle, '...'
 
         existing = glob.glob('*' + ytId + '.*');
-        if existing.__len__() > 0:
-            print 'alreary exists, skipping...'
+        partial = glob.glob('*' + ytId + '.*part');
+        if existing.__len__() > 0 and partial.__len__() <= 0:
+            print 'already exists, skipping...'
             return True
+        elif existing.__len__() > 0 and partial.__len__() > 0:
+            print 'already exists but incomplete, resuming...'
 
         try:
-            os.system('youtube-dl -t --audio-format=best http://www.youtube.com/watch?v=' + ytId)
+            os.system('youtube-dl -cit --audio-format=best http://www.youtube.com/watch?v=' + ytId)
             return True
 
         except KeyboardInterrupt:
